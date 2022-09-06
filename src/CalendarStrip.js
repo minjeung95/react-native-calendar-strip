@@ -161,11 +161,6 @@ class CalendarStrip extends Component {
     let days = {};
     let updateState = false;
 
-    console.log('componentDidUpdate:::::::::::this.props.selectedDate', this.props.selectedDate);
-    console.log('componentDidUpdate:::::::::::prevProps.selectedDate', prevProps.selectedDate);
-    console.log('componentDidUpdate:::::::::::this.props.weekStartDate', this.props.weekStartDate);
-    console.log('componentDidUpdate:::::::::::prevProps.weekStartDate', prevProps.weekStartDate);
-
     if (!this.compareDates(prevProps.startingDate, this.props.startingDate) ||
         !this.compareDates(prevProps.selectedDate, this.props.selectedDate) ||
         prevProps.datesBlacklist !== this.props.datesBlacklist ||
@@ -210,12 +205,8 @@ class CalendarStrip extends Component {
       // this.setState({weekStartDate: _props.selectedDate});
       const previousWeekStartDate = _props.selectedDate.clone().weekday(0);
       const previousWeekStartDate2 = _props.selectedDate.clone().weekday(6);
-      console.log('previousWeekStartDate: ', previousWeekStartDate, previousWeekStartDate2);
+
       const days = this.createDays(previousWeekStartDate);
-      // this.setState({ startingDate: previousWeekStartDate, ...days });
-      // days.datesList
-      // console.log('previousWeekStartDate: ', previousWeekStartDate, days.datesList);
-      console.log('_nextState.selectedDate: ', _state.selectedDate);
       this.setState({ selectedDate: _props.selectedDate, startingDate: previousWeekStartDate, weekStartDate: previousWeekStartDate, weekEndDate: previousWeekStartDate2, ...days});
       return false;
     }
@@ -232,7 +223,6 @@ class CalendarStrip extends Component {
   // JS date, or ISO 8601 strings.
   // Returns true if the datetimes values are the same; false otherwise.
   compareDates = (date1, date2) => {
-    console.log('compareDates:::::::::::');
 
     if (date1 && date1.valueOf && date2 && date2.valueOf)
     {
@@ -313,9 +303,7 @@ class CalendarStrip extends Component {
 
   // updateWeekView allows external callers to update the visible week.
   updateWeekView = date => {
-    console.log('updateWeekView:L:::');
     if (this.props.scrollable) {
-      console.log('updateWeekView::::this.props.scrollable: ', this.props.scrollable);
       this.scroller.scrollToDate(date);
       return;
     }
