@@ -1,8 +1,10 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { Text, TouchableOpacity } from "react-native";
+import { Text, TouchableOpacity, Image, View } from "react-native";
 
 import styles from "./Calendar.style.js";
+import arrow_bottom from "../src/img/arrow_bottom.png";
+
 
 class CalendarHeader extends Component {
   static propTypes = {
@@ -87,18 +89,21 @@ class CalendarHeader extends Component {
       <TouchableOpacity
         onPress={onHeaderSelected && onHeaderSelected.bind(this, {weekStartDate, weekEndDate})}
         disabled={!onHeaderSelected}
-        style={calendarHeaderContainerStyle}
+        style={calendarHeaderContainerStyle, {flexDirection: 'row', justifyContent: 'center'}}
       >
         <Text
           style={[
             styles.calendarHeader,
-            { fontSize: fontSize },
+            { fontSize: fontSize, paddingLeft: 25 },
             calendarHeaderStyle
           ]}
           allowFontScaling={allowHeaderTextScaling}
         >
           {_headerText}
         </Text>
+        <View style={{alignSelf: 'center', flexDirection: 'row', marginLeft: 10}}>
+          <Image source={arrow_bottom} />
+        </View>
       </TouchableOpacity>
     );
   }
