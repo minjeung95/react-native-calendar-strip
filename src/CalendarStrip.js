@@ -165,7 +165,7 @@ class CalendarStrip extends Component {
     if (this.state.datesList.length > 0) {
       let firstDate = this.state.datesList[0].date;
       let endDate = this.state.datesList[this.state.datesList.length - 1].date;
-      console.log('firstDate', firstDate, 'endDate', endDate);
+      // console.log('firstDate', firstDate, 'endDate', endDate);
 
       if (firstDate > this.props.selectedDate || endDate < this.props.selectedDate) {
         checkDate = true;
@@ -199,7 +199,7 @@ class CalendarStrip extends Component {
         days.weekStartDate = this.setLocale(previousWeekStartDate);
         days.weekEndDate = this.setLocale(previousWeekStartDate2);
 
-        console.log('previousWeekStartDate: ', previousWeekStartDate, 'previousWeekStartDate2: ', previousWeekStartDate2);
+        // console.log('previousWeekStartDate: ', previousWeekStartDate, 'previousWeekStartDate2: ', previousWeekStartDate2);
 
         //     weekStartDate: this.setLocale(previousWeekStartDate),
         //     weekEndDate: previousWeekStartDate2,
