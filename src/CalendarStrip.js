@@ -160,20 +160,53 @@ class CalendarStrip extends Component {
     let selectedDate = {};
     let days = {};
     let updateState = false;
+    let checkDate = false;
+
+    if (this.state.datesList.length > 0) {
+      let firstDate = this.state.datesList[0].date;
+      let endDate = this.state.datesList[this.state.datesList.length - 1].date;
+      console.log('firstDate', firstDate, 'endDate', endDate);
+
+      if (firstDate > this.props.selectedDate || endDate < this.props.selectedDate) {
+        checkDate = true;
+      }
+    }
 
     if (!this.compareDates(prevProps.startingDate, this.props.startingDate) ||
         !this.compareDates(prevProps.selectedDate, this.props.selectedDate) ||
         prevProps.datesBlacklist !== this.props.datesBlacklist ||
         prevProps.datesWhitelist !== this.props.datesWhitelist ||
         prevProps.markedDates  !== this.props.markedDates  ||
-        prevProps.customDatesStyles !== this.props.customDatesStyles )
+        prevProps.customDatesStyles !== this.props.customDatesStyles ||
+        checkDate)
     {
       // Protect against undefined startingDate prop
       let _startingDate = this.props.startingDate || this.state.startingDate;
+      if (checkDate) {
+        _startingDate = this.props.selectedDate.clone().weekday(0);
+      }
+
+      let selectedDateDt = this.setLocale(this.props.selectedDate);
 
       startingDate = { startingDate: this.setLocale(_startingDate)};
-      selectedDate = { selectedDate: this.setLocale(this.props.selectedDate)};
-      days = this.createDays(startingDate.startingDate, selectedDate.selectedDate);
+      selectedDate = { selectedDate: selectedDateDt};
+      if (checkDate) {
+        days = this.createDays(startingDate.startingDate);
+
+        const previousWeekStartDate = selectedDateDt.clone().weekday(0);
+        const previousWeekStartDate2 = selectedDateDt.clone().weekday(6);
+
+        days.weekStartDate = this.setLocale(previousWeekStartDate);
+        days.weekEndDate = this.setLocale(previousWeekStartDate2);
+
+        console.log('previousWeekStartDate: ', previousWeekStartDate, 'previousWeekStartDate2: ', previousWeekStartDate2);
+
+        //     weekStartDate: this.setLocale(previousWeekStartDate),
+        //     weekEndDate: previousWeekStartDate2,
+      } else {
+        days = this.createDays(startingDate.startingDate, selectedDate.selectedDate);
+      }
+
       updateState = true;
     }
 
@@ -194,22 +227,35 @@ class CalendarStrip extends Component {
     delete _props.leftSelector;
     delete _props.rightSelector;
 
-    let weekStartDate = nextState.weekStartDate;
-    let diffDays = 0;
-    if (weekStartDate) {
-      let diff = _nextProps.selectedDate - weekStartDate;
-      diffDays = Math.abs(diff / 1000 / 60 / 60 / 24);
-    }
-
-    if (weekStartDate === undefined || diffDays > 7) {
-      // this.setState({weekStartDate: _props.selectedDate});
-      const previousWeekStartDate = _props.selectedDate.clone().weekday(0);
-      const previousWeekStartDate2 = _props.selectedDate.clone().weekday(6);
-
-      const days = this.createDays(previousWeekStartDate);
-      this.setState({ selectedDate: _props.selectedDate, startingDate: previousWeekStartDate, weekStartDate: previousWeekStartDate, weekEndDate: previousWeekStartDate2, ...days});
-      return false;
-    }
+    // let weekStartDate = nextState.weekStartDate;
+    // let selectedDate = nextState.selectedDate;
+    // let diffDays = 0;
+    // let selectedDiffDays = 0;
+    // if (weekStartDate) {
+    //   let diff = _nextProps.selectedDate - weekStartDate;
+    //   let selectedDiff = _nextProps.selectedDate - selectedDate;
+    //   diffDays = Math.abs(diff / 1000 / 60 / 60 / 24);
+    //   selectedDiffDays = Math.abs(selectedDiff / 1000 / 60 / 60 / 24);
+    // }
+    //
+    // // if (weekStartDate === undefined || diffDays > 7) {
+    // if (selectedDiffDays > 0) {
+    //   // this.setState({weekStartDate: _props.selectedDate});
+    //   const previousWeekStartDate = selectedDate.clone().weekday(0);
+    //   const previousWeekStartDate2 = selectedDate.clone().weekday(6);
+    //
+    //   const days = this.createDays(previousWeekStartDate);
+    //
+    //   this.setState({
+    //     selectedDate: _props.selectedDate,
+    //     startingDate: previousWeekStartDate,
+    //     weekStartDate: previousWeekStartDate,
+    //     weekEndDate: previousWeekStartDate2,
+    //     ...days
+    //   });
+    //
+    //   // return true;
+    // }
 
     return (
         JSON.stringify(this.state) !== JSON.stringify(nextState) ||
@@ -502,7 +548,9 @@ class CalendarStrip extends Component {
       let date;
       if (useIsoWeekday) {
         // isoWeekday starts from Monday
-        date = this.setLocale(_startingDate.clone().isoWeekday(i + 1));
+        // date = this.setLocale(_startingDate.clone().isoWeekday(i + 1)); start monday
+
+        date = this.setLocale(_startingDate.clone().isoWeekday(i)); // start sunday
       } else {
         date = this.setLocale(_startingDate.clone().add(i, "days"));
       }

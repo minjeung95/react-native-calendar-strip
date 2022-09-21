@@ -94,7 +94,7 @@ export default class CalendarScroller extends Component {
     }
 
     if (selectedDate !== prevProps.renderDayParams.selectedDate) {
-      this.scrollToDate(selectedDate);
+      this.scrollToDate(selectedDate, this.props.data !== this.state.data ? this.props.data : []);
     }
 
     if (this.props.data !== prevProps.data) {
@@ -127,8 +127,16 @@ export default class CalendarScroller extends Component {
   }
 
   // Scroll to given date, and check against min and max date if available.
-  scrollToDate = (date) => {
-    let targetDate = moment(date).subtract(Math.round(this.state.numVisibleItems / 2) - 1, "days");
+  scrollToDate = (date, dates) => {
+    // let targetDate = moment(date).subtract(Math.round(this.state.numVisibleItems / 2) - 1, "days");
+
+    let targetDate = moment(date).day(0);
+
+    let _dates = this.state.data;
+    if (dates && dates.length > 0) {
+      _dates = dates;
+    }
+
     const {
       minDate,
       maxDate,
@@ -141,8 +149,8 @@ export default class CalendarScroller extends Component {
       targetDate = maxDate;
     }
 
-    for (let i = 0; i < this.state.data.length; i++) {
-      if (this.state.data[i].date.isSame(targetDate, "day")) {
+    for (let i = 0; i < _dates.length; i++) {
+      if (_dates.isSame(targetDate, "day")) {
         this.rlv?.scrollToIndex(i, true);
         break;
       }
